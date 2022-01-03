@@ -15,7 +15,9 @@
     "lib": ["es2018", "dom"],
     "paths": {
       "@explore-container": ["src/app/explore-container"],
-      "@pages/tabs": ["src/app/pages/tabs"]
+      "@pages/tabs": ["src/app/pages/tabs"],
+      "@services": ["src/app/services"],
+      "@interfaces": ["src/app/interfaces"]
     }
   },
   "angularCompilerOptions": {
