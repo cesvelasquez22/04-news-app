@@ -17,7 +17,8 @@
       "@explore-container": ["src/app/explore-container"],
       "@pages/tabs": ["src/app/pages/tabs"],
       "@services": ["src/app/services"],
-      "@interfaces": ["src/app/interfaces"]
+      "@interfaces": ["src/app/interfaces"],
+      "@components": ["src/app/components"]
     }
   },
   "angularCompilerOptions": {
