@@ -8,6 +8,7 @@ import { Article } from '@interfaces';
 
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
 import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
+import { StorageService } from '@services';
 
 @Component({
   selector: 'app-article',
@@ -22,7 +23,8 @@ export class ArticleComponent {
     private iab: InAppBrowser,
     private platform: Platform,
     private actionSheetCtrl: ActionSheetController,
-    private socialSharing: SocialSharing
+    private socialSharing: SocialSharing,
+    private storageService: StorageService
   ) {}
 
   openArticle() {
@@ -74,6 +76,6 @@ export class ArticleComponent {
   }
 
   onToogleFavorite() {
-    console.log('onToogleFavorite');
+    this.storageService.saveOrRemoveArticle(this.article);
   }
 }
