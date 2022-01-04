@@ -1,7 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActionSheetController, Platform } from '@ionic/angular';
+import {
+  ActionSheetButton,
+  ActionSheetController,
+  Platform,
+} from '@ionic/angular';
 import { Article } from '@interfaces';
+
 import { InAppBrowser } from '@awesome-cordova-plugins/in-app-browser/ngx';
+import { SocialSharing } from '@awesome-cordova-plugins/social-sharing/ngx';
 
 @Component({
   selector: 'app-article',
@@ -15,7 +21,8 @@ export class ArticleComponent {
   constructor(
     private iab: InAppBrowser,
     private platform: Platform,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private socialSharing: SocialSharing
   ) {}
 
   openArticle() {
@@ -29,32 +36,41 @@ export class ArticleComponent {
   }
 
   async onOpenMenu() {
+    const buttons: ActionSheetButton[] = [
+      {
+        text: 'Favorito',
+        icon: 'heart-outline',
+        handler: () => this.onToogleFavorite(),
+      },
+      {
+        text: 'Cancelar',
+        icon: 'close-outline',
+        role: 'cancel',
+      },
+    ];
+
+    const share: ActionSheetButton = {
+      text: 'Compartir',
+      icon: 'share-outline',
+      handler: () => this.onShareArticle(),
+    };
+
+    if (this.platform.is('capacitor')) {
+      buttons.unshift(share);
+    }
+
     const actionSheet = await this.actionSheetCtrl.create({
       header: 'Opciones',
-      buttons: [
-        {
-          text: 'Compartir',
-          icon: 'share-outline',
-          handler: () => this.onShareArticle(),
-        },
-        {
-          text: 'Favorito',
-          icon: 'heart-outline',
-          handler: () => this.onToogleFavorite(),
-        },
-        {
-          text: 'Cancelar',
-          icon: 'close-outline',
-          role: 'cancel',
-        },
-      ],
+      buttons,
     });
 
     await actionSheet.present();
   }
 
   onShareArticle() {
-    console.log('onShareArticle');
+    const { title, source, url } = this.article;
+
+    this.socialSharing.share(title, source.name, null, url);
   }
 
   onToogleFavorite() {
