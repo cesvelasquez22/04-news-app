@@ -48,4 +48,10 @@ export class StorageService {
       this._localArticles = articles || [];
     } catch (error) {}
   }
+
+  isArticleAtFavorites(article: Article) {
+    return !!this._localArticles.find(
+      (localArticle) => localArticle.title === article.title
+    );
+  }
 }
