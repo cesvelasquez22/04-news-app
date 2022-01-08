@@ -9,15 +9,21 @@ import { Article } from '@interfaces';
 export class StorageService {
   private _storage: Storage | null = null;
   private _localArticles: Article[] = [];
+  private readonly articles = 'articles';
 
   constructor(private storage: Storage) {
     this.init();
+  }
+
+  get localArticles() {
+    return [...this._localArticles];
   }
 
   async init() {
     // If using, define drivers here: await this.storage.defineDriver(/*...*/);
     const storage = await this.storage.create();
     this._storage = storage;
+    this.loadFavorites();
   }
 
   async saveOrRemoveArticle(article: Article) {
@@ -33,6 +39,13 @@ export class StorageService {
       this._localArticles = [article, ...this._localArticles];
     }
 
-    this._storage.set('ARTICLES', this._localArticles);
+    this._storage.set(this.articles, this._localArticles);
+  }
+
+  async loadFavorites() {
+    try {
+      const articles = await this._storage.get(this.articles);
+      this._localArticles = articles || [];
+    } catch (error) {}
   }
 }
