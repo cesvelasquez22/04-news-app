@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { Article, ArticlesByCategoryAndPage, NewsResponse } from '@interfaces';
 import { map } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { storedArticlesByCategory } from '@data';
 
 const apiUrl = environment.apiUrl;
 const apiKey = environment.apiKey;
@@ -11,7 +12,7 @@ const apiKey = environment.apiKey;
   providedIn: 'root',
 })
 export class NewsService {
-  private articlesByCategoryAndPage: ArticlesByCategoryAndPage = {};
+  private articlesByCategoryAndPage: ArticlesByCategoryAndPage = storedArticlesByCategory;
 
   constructor(private http: HttpClient) {}
 
@@ -23,15 +24,16 @@ export class NewsService {
     category: string,
     loadMore = false
   ): Observable<Article[]> {
-    if (loadMore) {
-      return this.getArticlesByCategory(category);
-    }
+    return of(this.articlesByCategoryAndPage[category].articles);
+    // if (loadMore) {
+    //   return this.getArticlesByCategory(category);
+    // }
 
-    if (this.articlesByCategoryAndPage[category]) {
-      return of(this.articlesByCategoryAndPage[category].articles);
-    }
+    // if (this.articlesByCategoryAndPage[category]) {
+    //   return of(this.articlesByCategoryAndPage[category].articles);
+    // }
 
-    return this.getArticlesByCategory(category);
+    // return this.getArticlesByCategory(category);
   }
 
   private getArticlesByCategory(category: string): Observable<Article[]> {
