@@ -58,7 +58,7 @@ export class ArticleComponent {
       handler: () => this.onShareArticle(),
     };
 
-    if (this.platform.is('capacitor')) {
+    if (this.platform.is('capacitor') || navigator.share) {
       buttons.unshift(share);
     }
 
@@ -73,7 +73,14 @@ export class ArticleComponent {
   onShareArticle() {
     const { title, source, url } = this.article;
 
-    this.socialSharing.share(title, source.name, null, url);
+    if (this.platform.is('capacitor')) {
+      this.socialSharing.share(title, source.name, null, url);
+    }
+
+    if (navigator.share) {
+      navigator.share({title, text: source.name, url});
+    }
+
   }
 
   onToogleFavorite() {
