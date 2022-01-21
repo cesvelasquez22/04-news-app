@@ -3,6 +3,7 @@ import {
   ActionSheetButton,
   ActionSheetController,
   Platform,
+  ToastController,
 } from '@ionic/angular';
 import { Article } from '@interfaces';
 
@@ -24,7 +25,8 @@ export class ArticleComponent {
     private platform: Platform,
     private actionSheetCtrl: ActionSheetController,
     private socialSharing: SocialSharing,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private toastController: ToastController
   ) {}
 
   openArticle() {
@@ -38,11 +40,13 @@ export class ArticleComponent {
   }
 
   async onOpenMenu() {
-    const articleAtFavorite = this.storageService.isArticleAtFavorites(this.article);
+    const articleAtFavorite = this.storageService.isArticleAtFavorites(
+      this.article
+    );
     const buttons: ActionSheetButton[] = [
       {
         text: articleAtFavorite ? 'Remover favorito' : 'Favorito',
-        icon: articleAtFavorite ?  'heart' : 'heart-outline',
+        icon: articleAtFavorite ? 'heart' : 'heart-outline',
         handler: () => this.onToogleFavorite(),
       },
       {
@@ -78,12 +82,28 @@ export class ArticleComponent {
     }
 
     if (navigator.share) {
-      navigator.share({title, text: source.name, url});
+      navigator.share({ title, text: source.name, url });
     }
-
   }
 
-  onToogleFavorite() {
-    this.storageService.saveOrRemoveArticle(this.article);
+  async onToogleFavorite() {
+    await this.storageService.saveOrRemoveArticle(this.article);
+
+    const isFavorite = this.storageService.isArticleAtFavorites(this.article);
+
+    if (isFavorite) {
+      this.presentToast('Agregado a favoritos');
+    } else {
+      this.presentToast('Removido de favoritos');
+    }
+  }
+
+  private async presentToast(message: string) {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      mode: 'ios'
+    });
+    toast.present();
   }
 }
